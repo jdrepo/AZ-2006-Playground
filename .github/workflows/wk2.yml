@@ -1,0 +1,28 @@
+name: wk2
+
+on:
+  workflow_run:
+    workflows: ["wk1"]   # Only runs after wk1
+    types:
+      - completed
+
+jobs:
+  swap-slots:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Swap staging and production slots
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --name AppService157753063 \
+              --resource-group RG1 \
+              --slot staging \
+              --target-slot production
