@@ -41,7 +41,7 @@ jobs:
           timeout: '10'
 
       - name: Upload Load Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: loadTestResults
           path: loadTest/results.zip
