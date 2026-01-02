@@ -10,6 +10,7 @@ env:
   TEMPLATE-FILE: infra/webapp.bicep
   SUBSCRIPTION-ID: 91ffa423-7876-4c8c-a374-7c3afeee4425
   WEBAPP-NAME: az-2006-pg
+  LOADTEST-NAME: az-2006-loadtest
   
 jobs:
   deploy:
@@ -23,11 +24,20 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       # Deploy Azure WebApp using Bicep file
-      - name: deploy
+      - name: deploy webapp
         uses: azure/arm-deploy@v2
         with:
           subscriptionId: ${{ env.SUBSCRIPTION-ID }}
           resourceGroupName: ${{ env.RESOURCE-GROUP }}
           template: bicep-template/webapp.bicep
           parameters: "webAppName=${{ env.WEBAPP-NAME }} location=${{ env.LOCATION }}"
+          failOnStdErr: false
+      # Deploy Azure Loadtest using Bicep file
+      - name: deploy loadtest
+        uses: azure/arm-deploy@v2
+        with:
+          subscriptionId: ${{ env.SUBSCRIPTION-ID }}
+          resourceGroupName: ${{ env.RESOURCE-GROUP }}
+          template: bicep-template/loadtest.bicep
+          parameters: "loadTestName=${{ env.LOADTEST-NAME }} location=${{ env.LOCATION }}"
           failOnStdErr: false
