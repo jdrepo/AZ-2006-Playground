@@ -43,7 +43,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
    Deployment Slot
    ========================= */
 resource slot 'Microsoft.Web/sites/slots@2022-09-01' = {
-  parent: ${webAppName}
+  parent: webAppName
   name: '${slotName}'
   location: location
   properties: {
