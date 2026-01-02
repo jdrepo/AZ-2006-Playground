@@ -15,6 +15,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      #checkout the repository
+      - uses: actions/checkout@v5
+      # Azure Login with secret
       - name: Azure Login
         uses: azure/login@v2
         with:
