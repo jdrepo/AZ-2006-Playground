@@ -39,7 +39,6 @@ jobs:
         with:
           resourceGroup: az2006-rg
           loadTestConfigFile: test1.yml
-          loadTestPlan: test1.jmx
           loadtestResource: ${{ env.LOAD_TEST_RESOURCE }}
           env: |
             [
