@@ -7,7 +7,11 @@ on:
     # Only trigger when the source branch is staging
     paths-ignore:
       - '**/*.md'
-
+env:
+  # For AZURE_WEBAPP_NAME enter just the name, not the full URL.
+  RESOURCE_GROUP: az2006-rg
+  LOAD_TEST_RESOURCE: az-2006-loadtest
+  AZURE_WEBAPP_NAME: az-2006-pg-staging
 jobs:
   deploy-and-test:
     runs-on: ubuntu-latest
@@ -36,6 +40,13 @@ jobs:
           resourceGroup: az2006-rg
           loadTestConfigFile: test1.yml
           loadTestPlan: test1.jmx
+          env: |
+            [
+              {
+              "name": "webapp",
+              "value": "${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+              }
+            ]
           
 
       - name: Upload Load Test Results
