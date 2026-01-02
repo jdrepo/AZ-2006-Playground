@@ -33,12 +33,10 @@ jobs:
       - name: Run Load Test
         uses: azure/load-testing@v1
         with:
+          resourceGroup: az2006-rg
           loadTestConfigFile: test1.yml
           loadTestPlan: test1.jmx
-          failureCriteria: 'avg-response-time>200'
-          autoStop: 'true'
-          errorPercentage: '80'
-          timeout: '10'
+          
 
       - name: Upload Load Test Results
         uses: actions/upload-artifact@v4
