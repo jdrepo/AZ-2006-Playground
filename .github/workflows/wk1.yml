@@ -12,6 +12,7 @@ env:
   RESOURCE_GROUP: az2006-rg
   LOAD_TEST_RESOURCE: az-2006-loadtest
   AZURE_WEBAPP_NAME: az-2006-pg-staging
+  AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
 jobs:
   deploy-and-test:
     runs-on: ubuntu-latest
