@@ -43,7 +43,8 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
    Deployment Slot
    ========================= */
 resource slot 'Microsoft.Web/sites/slots@2022-09-01' = {
-  name: '${webAppName}/${slotName}'
+  parent: ${webAppName}
+  name: '${slotName}'
   location: location
   properties: {
     serverFarmId: appServicePlan.id
