@@ -1,0 +1,47 @@
+name: wk1
+
+on:
+  pull_request:
+    branches:
+      - main
+    # Only trigger when the source branch is staging
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v3
+        with:
+          ref: staging
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to App Service (Staging Slot)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'AppService157753063'
+          slot-name: 'staging'
+          package: .
+
+      - name: Run Load Test
+        uses: azure/load-testing@v1
+        with:
+          loadTestConfigFile: test1.yml
+          loadTestPlan: test1.jmx
+          failureCriteria: 'avg-response-time>200'
+          autoStop: 'true'
+          errorPercentage: '80'
+          timeout: '10'
+
+      - name: Upload Load Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: loadTestResults
+          path: loadTest/results.zip
