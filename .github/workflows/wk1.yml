@@ -21,11 +21,23 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: staging
+      # Run dotnet build and publish
+      - name: dotnet build and publish
+        run: |
+          dotnet restore FruitAPI/FruitAPI.csproj
+          dotnet build FruitAPI/FruitAPI.csproj --configuration Release
+          dotnet publish FruitAPI/FruitAPI.csproj -c Release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/fruitapi
 
-      - name: Log in to Azure
+      - name: "Login via Azure CLI"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Setup .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Deploy to App Service (Staging Slot)
         uses: azure/webapps-deploy@v3
