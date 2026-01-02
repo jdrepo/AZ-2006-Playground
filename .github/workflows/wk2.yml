@@ -22,7 +22,7 @@ jobs:
         with:
           inlineScript: |
             az webapp deployment slot swap \
-              --name AppService157753063 \
-              --resource-group RG1 \
+              --name az-2006-pg \
+              --resource-group az2006-rg \
               --slot staging \
               --target-slot production
