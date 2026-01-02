@@ -2,6 +2,7 @@ param webAppName string = uniqueString(resourceGroup().id) // Generate unique St
 param sku string = 'S1' // The SKU of App Service Plan
 param location string = resourceGroup().location
 param slotName string = 'staging'
+param configurationSource string = 'production'
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 
