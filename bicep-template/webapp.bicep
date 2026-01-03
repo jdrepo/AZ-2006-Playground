@@ -1,5 +1,5 @@
 param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
-param sku string = 'S1' // The SKU of App Service Plan - S1 because of deployment slots support
+param sku string = 'S1' // The SKU of App Service Plan - S1 because of deployment slots
 param location string = resourceGroup().location
 param slotName string = 'staging'
 param configurationSource string = 'production'
