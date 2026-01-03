@@ -1,0 +1,69 @@
+name: wk1
+
+on:
+  pull_request:
+    branches:
+      - main
+    # Only trigger when the source branch is staging
+    paths-ignore:
+      - '**/*.md'
+env:
+  # For AZURE_WEBAPP_NAME enter just the name, not the full URL.
+  RESOURCE_GROUP: az2006-rg
+  LOAD_TEST_RESOURCE: az-2006-loadtest
+  AZURE_WEBAPP_NAME: az-2006-pg-staging
+  AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
+jobs:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v3
+        with:
+          ref: staging
+      # Run dotnet build and publish
+      - name: dotnet build and publish
+        run: |
+          dotnet restore FruitAPI/FruitAPI.csproj
+          dotnet build FruitAPI/FruitAPI.csproj --configuration Release
+          dotnet publish FruitAPI/FruitAPI.csproj -c Release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/fruitapi
+
+      - name: "Login via Azure CLI"
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Setup .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Deploy to App Service (Staging Slot)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'az-2006-pg'
+          slot-name: 'staging'
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/fruitapi"
+
+      - name: Run Load Test
+        uses: azure/load-testing@v1
+        with:
+          resourceGroup: az2006-rg
+          loadTestConfigFile: test1.yml
+          loadtestResource: ${{ env.LOAD_TEST_RESOURCE }}
+          env: |
+            [
+              {
+              "name": "webapp",
+              "value": "${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+              }
+            ]
+          
+
+      - name: Upload Load Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: loadTestResults
+          path: loadTest/results.zip
